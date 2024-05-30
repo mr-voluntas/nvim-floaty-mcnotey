@@ -1,2 +1,2 @@
-# nvim-note-float
+# nvim-float-note
 floaty notes.
