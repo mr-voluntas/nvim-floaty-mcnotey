@@ -3,14 +3,15 @@ local M = {}
 function M:setup(opts)
 	-- if no opts then set to default
 	if not opts then
-		M.notes_path = vim.fn.expand("~/floaty-mcnotes.txt")
+		self.notes_path = vim.fn.expand("~/floaty-mcnotes.txt")
 	end
+	print(type(opts))
 	-- if opts are not recieved as table, throw error
-	if not (type(opts) == "table") then
-		error("opts must be a table", 1)
-	end
+	-- if not (type(opts) == "table") then
+	-- error("opts must be a table", 1)
+	-- end
 	-- set note path from opts
-	M.notes_path = opts.notes_path
+	self.notes_path = opts.notes_path
 end
 
 local function load_notes()
