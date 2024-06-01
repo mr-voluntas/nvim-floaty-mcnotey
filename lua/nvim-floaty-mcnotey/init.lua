@@ -5,45 +5,44 @@ local config = {
 }
 
 function M:setup(conf)
-	if not (type(conf) == "table") and conf ~= nil then
-		config = vim.tbl_deep_extend("force", config, conf or {})
+	if conf and type(conf) == "table" then
+		config = vim.tbl_deep_extend("force", config, conf)
 	end
 end
 
 local function load_notes()
 	local notes = {}
-	for line in io.lines(config.notes_path) do
-		table.insert(notes, line)
+	local file = io.open(config.notes_path, "r")
+	if file then
+		for line in io.lines(config.notes_path) do
+			table.insert(notes, line)
+		end
+		file:close()
+	else
+		print("Warning: Could not open file for reading.")
 	end
 	return notes
 end
 
 local function create_buffer()
-	-- create new buffer
 	local buf = vim.api.nvim_create_buf(true, false)
-	-- call it floaty-mcnotes
-	vim.api.nvim_buf_set_name(buf, "floaty-mcnotes")
-	-- check its loaded
-	local is_buf_loaded = vim.api.nvim_buf_is_loaded(buf)
-	if is_buf_loaded then
-		-- load notes and add it into the buffer
+	if buf then
+		vim.api.nvim_buf_set_name(buf, "floaty-mcnotes")
 		local notes = load_notes()
 		vim.api.nvim_buf_set_lines(buf, 0, -1, false, notes)
-		return buf
+	else
+		print("Error: Could not create new buffer.")
 	end
+	return buf
 end
 
 local function get_buffer()
-	-- loop through buffers to find one called "floaty-mcnotes"
 	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 		local buf_name = vim.api.nvim_buf_get_name(buf)
-		local floaty_buf_name = "floaty%-mcnotes"
-		local found = string.match(buf_name, floaty_buf_name)
-		if found then
+		if buf_name:match("floaty%-mcnotes") then
 			return buf
 		end
 	end
-	-- if it cant find one, create one
 	return create_buffer()
 end
 
@@ -79,8 +78,10 @@ local function create_floaty_window()
 		},
 	}
 
-	-- autocommand to save changes to the original file
 	local buf = get_buffer()
+	assert(vim.api.nvim_buf_is_valid(buf), "Error: Not a valid buffer.")
+
+	-- autocommand to save changes to the original file
 	vim.api.nvim_create_autocmd("BufWritePost", {
 		buffer = buf,
 		callback = function()
@@ -97,16 +98,13 @@ local function create_floaty_window()
 		end,
 	})
 
-	-- return the new floaty window to use for toggling
 	return vim.api.nvim_open_win(buf, true, window_opts)
 end
 
 function M:toggle_floaty_mcnotes()
 	local buf = vim.api.nvim_get_current_buf()
 	local buf_name = vim.api.nvim_buf_get_name(buf)
-	local floaty_buf_name = "floaty%-mcnotes"
-	-- if the current buffer is floaty-mcnotes, hide it, else open it
-	if string.match(buf_name, floaty_buf_name) then
+	if buf_name:match("floaty%-mcnotes") then
 		vim.api.nvim_command("hide")
 	else
 		create_floaty_window()
