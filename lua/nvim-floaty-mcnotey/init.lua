@@ -46,45 +46,33 @@ local function get_buffer()
 end
 
 local function create_floaty_window()
-	-- get the editor's max width and height
-	local height = vim.o.lines
-	local width = vim.o.columns
+  local height = vim.o.lines
+  local width = vim.o.columns
 
-	-- if the editor is big enough
-	if width > 150 or height > 35 then
-		-- fzf's window height is 3/4 of the max height, but not more than 30
-		local win_height = math.min(math.ceil(height * 3 / 4), 30)
-		local win_width
+  -- 80% of the editor's height, capped at 30 lines
+  local win_height = math.min(math.ceil(height * 0.7), 50)
+  -- 80% of the editor's width, capped at 150 columns
+  local win_width = math.min(math.ceil(width * 0.8), 190)
 
-		-- if the width is small
-		if width < 150 then
-			-- just subtract 8 from the editor's width
-			win_width = math.ceil(width - 8)
-		else
-			-- use 90% of the editor's width
-			win_width = math.ceil(width * 0.9)
-		end
-
-		-- settings for the fzf window
-		local opts = {
-			style = "minimal",
-			relative = "editor",
-			width = win_width,
-			height = win_height,
-			row = math.ceil((height - win_height) / 2),
-			col = math.ceil((width - win_width) / 2),
-			anchor = "NW",
-			border = {
-				"╭",
-				"─",
-				"╮",
-				"│",
-				"╯",
-				"─",
-				"╰",
-				"│",
-			},
-		}
+  local opts = {
+    style = "minimal",
+    relative = "editor",
+    width = win_width,
+    height = win_height,
+    row = math.ceil((height - win_height) / 2),
+    col = math.ceil((width - win_width) / 2),
+    anchor = "NW",
+    border = {
+      "╭",
+      "─",
+      "╮",
+      "│",
+      "╯",
+      "─",
+      "╰",
+      "│",
+    },
+  }
 
 		local buf = get_buffer()
 		assert(vim.api.nvim_buf_is_valid(buf), "Error: Not a valid buffer.")
