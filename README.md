@@ -16,7 +16,7 @@ return {
 	"wxllxm/nvim-floaty-mcnotey",
 	config = function()
 		require("nvim-floaty-mcnotey").setup("~/Documents/notes/Floaty-McNoties.txt")
-		vim.keymap.set("n", "<leader>fn", vim.cmd.Float, {})
+		vim.keymap.set("n", "<leader>fn", vim.cmd.Float, {silent = true})
 	end,
 }
 ```
