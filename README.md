@@ -15,15 +15,8 @@ Toggle your floaty mcnotey where ever you are, make your notes, save with :w & c
 return {
 	"wxllxm/nvim-floaty-mcnotey",
 	config = function()
-		require("nvim-floaty-mcnotey").setup({ notes_path = "~/Notes.lua" })
+		require("nvim-floaty-mcnotey").setup("~/Documents/notes/Floaty-McNoties.txt")
+		vim.keymap.set("n", "<leader>fn", vim.cmd.Float, {})
 	end,
-	keys = {
-		{
-			"<leader>nn",
-			":lua require('nvim-floaty-mcnotey').toggle_floaty_mcnotes()<CR>",
-			desc = "Toggle Floaty McNotey",
-			silent = true
-		},
-	},
 }
 ```
