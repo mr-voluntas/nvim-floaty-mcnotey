@@ -14,10 +14,9 @@ local function load_notes()
 	local notes = {}
 	local file = io.open(config.notes_path, "r")
 	if file then
-		for line in io.lines(config.notes_path) do
+		for line in file(config.notes_path) do
 			table.insert(notes, line)
 		end
-		file:close()
 	else
 		print("Warning: Could not open file for reading.")
 	end
