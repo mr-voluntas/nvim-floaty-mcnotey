@@ -1,17 +1,15 @@
 local M = {}
-local config = {
-	notes_path = vim.fn.expand("~/floaty-mcnotes.md"),
-}
+local notes_path = vim.fn.expand("~/floaty-mcnoties.txt")
 
-function M:setup(conf)
-	if conf and type(conf) == "table" then
-		config = vim.tbl_deep_extend("force", config, conf)
+function M.setup(path)
+	if path and type(path) == "string" then
+		notes_path = vim.fn.expand(path)
 	end
 end
 
 local function load_notes()
 	local notes = {}
-	local file = io.open(config.notes_path, "r")
+	local file = io.open(notes_path, "r")
 	if file then
 		for line in file:lines() do
 			table.insert(notes, line)
@@ -82,7 +80,7 @@ local function create_floaty_window()
 		buffer = buf,
 		callback = function()
 			local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-			local file = io.open(config.notes_path, "w")
+			local file = io.open(notes_path, "w")
 			if file then
 				for _, line in ipairs(lines) do
 					file:write(line, "\n")
@@ -97,7 +95,7 @@ local function create_floaty_window()
 	return vim.api.nvim_open_win(buf, true, opts)
 end
 
-function M:toggle_floaty_mcnotes()
+function M.toggle_floaty_mcnotes()
 	local buf = vim.api.nvim_get_current_buf()
 	local buf_name = vim.api.nvim_buf_get_name(buf)
 	if buf_name:match("floaty%-mcnotes") then
@@ -106,5 +104,10 @@ function M:toggle_floaty_mcnotes()
 		create_floaty_window()
 	end
 end
+
+vim.api.nvim_create_user_command("Float", function()
+	print(notes_path)
+	M.toggle_floaty_mcnotes()
+end, { bang = true, desc = "toggle the floaty mcnotey notes window" })
 
 return M
