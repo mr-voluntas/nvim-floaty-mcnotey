@@ -16,7 +16,7 @@ local function load_notes()
 		end
 		file:close()
 	else
-		print("Warning: Could not open file for reading.")
+		print("Warning: Cant find notes file at " .. notes_path .. ". Making a new file now.")
 	end
 	return notes
 end
@@ -106,7 +106,6 @@ function M.toggle_floaty_mcnotes()
 end
 
 vim.api.nvim_create_user_command("Float", function()
-	print(notes_path)
 	M.toggle_floaty_mcnotes()
 end, { bang = true, desc = "toggle the floaty mcnotey notes window" })
 
