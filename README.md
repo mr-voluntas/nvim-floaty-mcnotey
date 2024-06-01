@@ -22,6 +22,7 @@ return {
 			"<leader>nn",
 			":lua require('nvim-floaty-mcnotey').toggle_floaty_mcnotes()<CR>",
 			desc = "Toggle Floaty McNotey",
+			silent = true
 		},
 	},
 }
