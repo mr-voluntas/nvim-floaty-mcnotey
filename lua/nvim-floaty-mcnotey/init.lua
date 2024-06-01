@@ -53,8 +53,8 @@ local function create_floaty_window()
   local window_height = math.ceil(screen_height * 0.8)
   local window_width = math.ceil(screen_width * 0.8)
   -- calculates the center of the screen
-  local row = math.floor((screen_height - window_height) / 2)
-  local cols = math.floor((screen_width - window_width) / 2)
+  local row = math.ceil((screen_height - window_height) / 2)
+  local cols = math.ceil((screen_width - window_width) / 2)
 
   -- floaty window options
   local window_opts = {
