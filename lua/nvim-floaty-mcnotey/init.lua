@@ -75,8 +75,12 @@ local function create_floaty_window()
 	local buf = get_buffer()
 	assert(vim.api.nvim_buf_is_valid(buf), "Error: Not a valid buffer.")
 
-	-- autocommand to save changes to the original file
-	vim.api.nvim_create_autocmd("BufWritePost", {
+	local augroup = vim.api.nvim_create_augroup("CustomWriteCommand", { clear = true })
+
+	-- autocommand to override existing save command
+	-- without this a file will be created inside the project folder
+	vim.api.nvim_create_autocmd("BufWriteCmd", {
+		group = augroup,
 		buffer = buf,
 		callback = function()
 			local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
@@ -86,9 +90,12 @@ local function create_floaty_window()
 					file:write(line, "\n")
 				end
 				file:close()
+				print("Changes saved to notes file")
 			else
 				print("Error: Could not open file for writing")
 			end
+
+			vim.api.nvim_command("silent! bwipeout!")
 		end,
 	})
 
@@ -105,7 +112,11 @@ function M.toggle_floaty_mcnotes()
 	end
 end
 
-vim.api.nvim_create_user_command("Float", function()
+vim.api.nvim_create_user_command("FloatyMcNotey", function()
+	M.toggle_floaty_mcnotes()
+end, { bang = true, desc = "toggle the floaty mcnotey notes window" })
+
+return M
 	M.toggle_floaty_mcnotes()
 end, { bang = true, desc = "toggle the floaty mcnotey notes window" })
 
